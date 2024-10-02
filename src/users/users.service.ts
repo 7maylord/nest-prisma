@@ -7,18 +7,38 @@ export class UsersService {
   constructor(private prisma: PrismaService) {}
 
   createUser(data: Prisma.UserCreateInput) {
-    return this.prisma.user.create({ data });
+    return this.prisma.user.create({
+      data: {
+        ...data,
+        userSetting: {
+          create: {
+            smsEnabled: true,
+            notificationsOn: false,
+          },
+        },
+      },
+    });
   }
 
   getUsers() {
-    return this.prisma.user.findMany();
+    return this.prisma.user.findMany({ include: { userSetting: true } });
   }
 
   getUserById(id: number) {
-    return this.prisma.user.findUnique({ where: { id } });
+    return this.prisma.user.findUnique({
+      where: { id },
+      include: {
+        userSetting: {
+          select: {
+            smsEnabled: true,
+            notificationsOn: true,
+          },
+        },
+        posts: true,
+      },
+    });
   }
 
-  
   async updateUserById(id: number, data: Prisma.UserUpdateInput) {
     const findUser = await this.getUserById(id);
     if (!findUser) throw new HttpException('User Not Found', 404);
@@ -38,13 +58,13 @@ export class UsersService {
     return this.prisma.user.delete({ where: { id } });
   }
 
-//   async updateUserSettings(
-//     userId: number,
-//     data: Prisma.UserSettingUpdateInput,
-//   ) {
-//     const findUser = await this.getUserById(userId);
-//     if (!findUser) throw new HttpException('User Not Found', 404);
-//     if (!findUser.userSetting) throw new HttpException('No Settings', 400);
-//     return this.prisma.userSetting.update({ where: { userId }, data });
-//   }
+  async updateUserSettings(
+    userId: number,
+    data: Prisma.UserSettingUpdateInput,
+  ) {
+    const findUser = await this.getUserById(userId);
+    if (!findUser) throw new HttpException('User Not Found', 404);
+    if (!findUser.userSetting) throw new HttpException('No Settings', 400);
+    return this.prisma.userSetting.update({ where: { userId }, data });
+  }
 }

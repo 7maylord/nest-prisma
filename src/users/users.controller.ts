@@ -51,12 +51,11 @@ export class UsersController {
     return this.usersService.deleteUserById(id);
   }
 
-  // PATCH users/:id/settings
-//   @Patch(':id/settings')
-//   updateUserSettingsByUserId(
-//     @Param('id', ParseIntPipe) id: number,
-//     @Body() updateUserSettingsDto: UpdateUserSettingsDto,
-//   ) {
-//     return this.usersService.updateUserSettings(id, updateUserSettingsDto);
-//   }
+  @Patch(':id/settings')
+  updateUserSettingsByUserId(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserSettingsDto: UpdateUserSettingsDto,
+  ) {
+    return this.usersService.updateUserSettings(id, updateUserSettingsDto);
+  }
 }
