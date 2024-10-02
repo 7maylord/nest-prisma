@@ -18,12 +18,7 @@ export class UsersService {
     return this.prisma.user.findUnique({ where: { id } });
   }
 
-  async deleteUserById(id: number) {
-    const findUser = await this.getUserById(id);
-    if (!findUser) throw new HttpException('User not found', 404);
-    return this.prisma.user.delete({ where: { id } });
-  }
-
+  
   async updateUserById(id: number, data: Prisma.UserUpdateInput) {
     const findUser = await this.getUserById(id);
     if (!findUser) throw new HttpException('User Not Found', 404);
@@ -35,6 +30,12 @@ export class UsersService {
       if (findUser) throw new HttpException('Username already taken', 400);
     }
     return this.prisma.user.update({ where: { id }, data });
+  }
+
+  async deleteUserById(id: number) {
+    const findUser = await this.getUserById(id);
+    if (!findUser) throw new HttpException('User not found', 404);
+    return this.prisma.user.delete({ where: { id } });
   }
 
 //   async updateUserSettings(
